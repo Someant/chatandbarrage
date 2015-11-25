@@ -26,11 +26,10 @@
     body{
         background: #eee;
         font-family: Lato, "PingFang SC", "Microsoft YaHei", sans-serif;
-        margin: 30px auto;
     }
 
-    .direct-chat-messages{
-        min-height: 800px;
+    .direct-chat-text{
+        margin: 0;
     }
 
     /* 必需 */
@@ -58,6 +57,7 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">Chat</h3>
                     <div class="box-tools pull-right">
+                        <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span>
                         <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                         <button class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle"><i class="fa fa-comments"></i></button>
                         <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -67,23 +67,27 @@
                     <!-- Conversations are loaded here -->
                     <div class="direct-chat-messages">
                         <!-- Message. Default to the left -->
-                        <div class="direct-chat-msg {{ item.class }}" v-for="item in items">
+                        <div class="direct-chat-msg" v-for="item in items_left">
                             <div class="direct-chat-info clearfix">
-
-                                <span class="direct-chat-name pull-left" v-if="item.uid==0">{{ item.name }}</span>
-                                <span class="direct-chat-name pull-right" v-if="item.uid==1">{{ item.name }}</span>
-
-                                <span class="direct-chat-timestamp pull-right" v-if="item.uid==0">{{ item.time }}</span>
-                                <span class="direct-chat-timestamp pull-left" v-if="item.uid==1">{{ item.time }}</span>
+                                <span class="direct-chat-name pull-left">{{ item.name }}</span>
+                                <span class="direct-chat-timestamp pull-right">{{ item.time }}</span>
                             </div><!-- /.direct-chat-info -->
-                            <img class="direct-chat-img" src="http://127.0.0.1/vuejs/public/dist/images/boy.jpg" v-if="item.uid==1" alt="message user image">
-                            <img class="direct-chat-img" src="http://127.0.0.1/vuejs/public/dist/images/girl.jpg" v-if="item.uid==0" alt="message user image">
+                            <img class="direct-chat-img" src="./dist/images/boy.jpg" alt="message user image">
                             <div class="direct-chat-text">
                                 {{ item.message }}
                             </div><!-- /.direct-chat-text -->
                         </div><!-- /.direct-chat-msg -->
 
 
+                        <div class="direct-chat-msg right" v-for="item in items_right">
+                            <div class="direct-chat-info clearfix">
+                                <span class="direct-chat-name pull-right">{{ item.name }}</span>
+                                <span class="direct-chat-timestamp pull-left">{{ item.time }}</span>
+                            </div><!-- /.direct-chat-info -->
+                            <div class="direct-chat-text">
+                                {{ item.message }}
+                            </div><!-- /.direct-chat-text -->
+                        </div>
 
                     </div><!--/.direct-chat-messages-->
 
@@ -92,12 +96,14 @@
 
                 </div><!-- /.box-body -->
                 <div class="box-footer">
+                    <form>
                         <div class="input-group">
-                            <input type="text" name="message" class="form-control" v-model="message" v-on:keyup.enter="send">
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-primary btn-flat" v-on:click="send" >Send</button>
-                            </span>
+                            <input type="text" name="message" placeholder="Type Message ..." class="form-control" v-model="message">
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary btn-flat" @click="send">Send</button>
+                      </span>
                         </div>
+                    </form>
                 </div><!-- /.box-footer-->
             </div><!--/.direct-chat -->
         </div><!-- /.col -->
@@ -120,13 +126,13 @@
 
         data:{
             items:[
-
+                {name:'Say',message:'Hello~',time:''},
             ],
             items_left:[
-
+                {name:'',message:'',time:'',uid:''},
             ],
             items_right:[
-
+                {name:'',message:'',time:'',uid:''},
             ]
         },
 
@@ -137,19 +143,12 @@
 
                 if(data.uid==uid)
                 {
-                    data.uid=1;
-                    //this.items_right.push(data);
-                    data.class='right';
+                    this.items_right.push(data);
                 }
                 else
                 {
-                    //this.items_left.push(data);
-                    data.uid=0;
-                    data.class='left';
+                    this.items_left.push(data);
                 }
-
-                this.items.push(data);
-                console.log(data);
 
             }.bind(this));
 
