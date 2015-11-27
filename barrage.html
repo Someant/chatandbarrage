@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/dist/css/ate.css">
+
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+
+    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+
+</head>
+
+<style>
+
+    body{
+        background: #eee;
+        font-family: Lato, "PingFang SC", "Microsoft YaHei", sans-serif;
+        margin: 30px auto;
+    }
+
+    li{
+        list-style: none;
+    }
+
+    .direct-chat-messages{
+        min-height: 800px;
+    }
+
+    .expand-transition {
+        transition: all .3s ease;
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    .expand-enter, .expand-leave {
+        height: 0;
+        padding: 0 30px;
+        opacity: 0;
+    }
+
+    .barrage{
+        position:fixed;
+        left:500px;
+        top:100px;
+        color: #fff;
+        font-size: 16px;
+        z-index: 9999;
+    }
+    .barrage li{
+        width: 800px;
+    }
+
+</style>
+<body>
+
+<ul class="barrage" v-for="item in items">
+    <li style="margin-top:{{item.top}}px"><marquee direction="right" scrolldelay="100" loop="1">{{ item.message }}</marquee></li>
+</ul>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+
+            <iframe src="https://player.vimeo.com/video/108190048" width="1024" height="640" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/108190048">THEY CRAWL AMONGST US!</a> from <a href="https://vimeo.com/sihanouk">Sihanouk Mariona</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+
+            <div class="box-footer">
+                <div class="input-group">
+                    <input type="text" name="message" class="form-control" v-model="message" v-on:keyup.enter="send">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-flat" v-on:click="send" >Send</button>
+                            </span>
+                </div>
+            </div><!-- /.box-footer-->
+        </div><!-- /.col -->
+
+    </div>
+</div>
+
+<script src="http://cdn.css.net/libs/vue/1.0.8/vue.js"></script>
+
+<script src="//cdn.bootcss.com/socket.io/1.3.7/socket.io.min.js"></script>
+
+<script>
+
+    $(function () {
+        $("#myModal").modal({backdrop:'static'});
+    });
+
+    var socket=io();
+
+
+    var uid=generateUUID();
+
+
+    var ex1=new Vue({
+        el: 'body',
+
+        data:{
+            items:[{message:'dsad'}],
+            items_left:[],
+            items_right:[]
+        },
+
+
+        ready:function(){
+
+            socket.on('barrage.message',function(data){
+
+                this.items.push(data);
+                console.log(data);
+
+            }.bind(this));
+
+        },
+
+        methods:{
+            send:function(e){
+                var myDate = new Date();
+                var nowtime=myDate.toLocaleTimeString();
+                data={name:this.name,message:this.message,time:nowtime,uid:uid,top:Math.round(Math.random()*100)};
+                console.log(data);
+                socket.emit('barrage.message',data);
+                this.message='';
+                e.preventDefault();
+            },
+            remove:function(index){
+                this.items.splice(index,1);
+            }
+        }
+    });
+
+
+    function generateUUID(){
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (d + Math.random()*16)%16 | 0;
+            d = Math.floor(d/16);
+            return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+        });
+        return uuid;
+    };
+
+
+
+</script>
+</body>
+</html>
