@@ -1,7 +1,7 @@
 # Chat and Barrage
 Chat and barrage with socket.io and Vue.js for website.
 
-[<img src="http://github.com/someant/chatandbarrage/raw/master/chat.gif"/>]
+<img src="http://github.com/someant/chatandbarrage/raw/master/chat.gif"/>
 
 ##Getting Start:
 
